@@ -1,0 +1,206 @@
+/* ===== Variables de color - Heladería ===== */
+:root {
+  --crema: #FFF8F0;
+  --menta: #BFE8D4;
+  --menta-oscura: #7FCBA4;
+  --fresa: #FF8FA3;
+  --fresa-oscura: #E8637C;
+  --chocolate: #4A3428;
+  --gris-texto: #5C5552;
+  --blanco: #FFFFFF;
+  --borde: #E5DDD3;
+  --alerta: #F4A259;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Verdana, sans-serif;
+  background-color: var(--crema);
+  color: var(--gris-texto);
+}
+
+/* ===== Barra superior ===== */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--blanco);
+  padding: 16px 32px;
+  border-bottom: 2px solid var(--borde);
+}
+
+.navbar .logo {
+  font-size: 22px;
+  font-weight: bold;
+  color: var(--chocolate);
+}
+
+.navbar .logo span {
+  color: var(--fresa);
+}
+
+.navbar .usuario {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+}
+
+.btn-salir {
+  background: none;
+  border: 1px solid var(--borde);
+  padding: 6px 14px;
+  border-radius: 6px;
+  color: var(--gris-texto);
+  text-decoration: none;
+  font-size: 13px;
+}
+
+/* ===== Contenedor general ===== */
+.contenedor {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px;
+}
+
+/* ===== Título de sección ===== */
+.titulo-seccion {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.titulo-seccion h1 {
+  font-size: 24px;
+  color: var(--chocolate);
+}
+
+.titulo-seccion p {
+  font-size: 14px;
+  color: var(--gris-texto);
+  margin-top: 4px;
+}
+
+/* ===== Botones ===== */
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+}
+
+.btn-primario {
+  background-color: var(--fresa);
+  color: var(--blanco);
+}
+
+.btn-primario:hover {
+  background-color: var(--fresa-oscura);
+}
+
+.btn-secundario {
+  background-color: var(--menta);
+  color: var(--chocolate);
+}
+
+.btn-secundario:hover {
+  background-color: var(--menta-oscura);
+}
+
+/* ===== Tarjetas resumen ===== */
+.tarjetas {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.tarjeta {
+  background-color: var(--blanco);
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.tarjeta .numero {
+  font-size: 26px;
+  font-weight: bold;
+  color: var(--chocolate);
+}
+
+.tarjeta .etiqueta {
+  font-size: 13px;
+  color: var(--gris-texto);
+  margin-top: 4px;
+}
+
+/* ===== Tabla de inventario ===== */
+.tabla-caja {
+  background-color: var(--blanco);
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background-color: var(--crema);
+}
+
+th, td {
+  text-align: left;
+  padding: 14px 20px;
+  font-size: 14px;
+  border-bottom: 1px solid var(--borde);
+}
+
+th {
+  color: var(--chocolate);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+.estado {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.estado.ok {
+  background-color: var(--menta);
+  color: var(--chocolate);
+}
+
+.estado.bajo {
+  background-color: #FDE5C4;
+  color: var(--alerta);
+}
+
+.acciones a {
+  margin-right: 12px;
+  font-size: 13px;
+  color: var(--fresa-oscura);
+  text-decoration: none;
+}
+
+
