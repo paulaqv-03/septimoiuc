@@ -1,17 +1,449 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Heladería Doña Nieve - Inventario</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amareno Gelato Italiano · Inventario</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,500;1,600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --crema:#FBF1E2;
+    --marfil:#FFFBF4;
+    --panna:#F3E7D4;
+    --amarena:#7A1128;
+    --amarena-luz:#A8263F;
+    --amarena-oscuro:#4E0A19;
+    --pistacchio:#7C9160;
+    --pistacchio-oscuro:#546A3C;
+    --oro:#C9A227;
+    --cioccolato:#3A2620;
+    --linea:#E7D8BE;
+    --sombra: 0 10px 30px rgba(58,38,32,.12);
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--crema);
+    color:var(--cioccolato);
+    font-family:'Manrope',sans-serif;
+    background-image:
+      radial-gradient(circle at 6% 8%, rgba(122,17,40,.05) 0, transparent 40%),
+      radial-gradient(circle at 96% 18%, rgba(124,145,96,.08) 0, transparent 45%);
+  }
+
+  h1,h2,h3, .display{
+    font-family:'Fraunces', serif;
+    margin:0;
+  }
+
+  /* ---------- NAVBAR ---------- */
+  .navbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:16px 40px;
+    background:var(--amarena-oscuro);
+    color:var(--marfil);
+    position:sticky;
+    top:0;
+    z-index:50;
+    box-shadow:var(--sombra);
+  }
+  .logo{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-weight:600;
+    font-size:1.5rem;
+    letter-spacing:.3px;
+  }
+  .logo .sub{
+    display:block;
+    font-family:'Manrope',sans-serif;
+    font-style:normal;
+    font-weight:600;
+    font-size:.6rem;
+    letter-spacing:3px;
+    text-transform:uppercase;
+    color:var(--oro);
+    margin-top:-2px;
+  }
+  .cono-icono{
+    width:34px;height:34px;flex-shrink:0;
+    filter:drop-shadow(0 3px 4px rgba(0,0,0,.35));
+  }
+  .usuario{
+    display:flex;
+    align-items:center;
+    gap:18px;
+    font-size:.9rem;
+  }
+  .btn-salir{
+    color:var(--marfil);
+    text-decoration:none;
+    border:1px solid rgba(255,255,255,.35);
+    padding:8px 16px;
+    border-radius:999px;
+    transition:.25s;
+    font-weight:600;
+  }
+  .btn-salir:hover{ background:rgba(255,255,255,.12); border-color:var(--oro); }
+
+  /* ---------- VITRINA (elemento firma) ---------- */
+  .vitrina{
+    background:linear-gradient(180deg, var(--amarena) 0%, var(--amarena-oscuro) 100%);
+    padding:38px 40px 54px;
+    color:var(--marfil);
+    overflow:hidden;
+    position:relative;
+  }
+  .vitrina::after{
+    content:"";
+    position:absolute;
+    left:0; right:0; bottom:0;
+    height:26px;
+    background:repeating-linear-gradient(115deg, #E9D6A9 0 14px, #DEC98D 14px 28px);
+    box-shadow: inset 0 6px 10px rgba(0,0,0,.25);
+  }
+  .vitrina-texto{ max-width:560px; }
+  .vitrina-texto .eyebrow{
+    text-transform:uppercase;
+    letter-spacing:3px;
+    font-size:.7rem;
+    font-weight:700;
+    color:var(--oro);
+  }
+  .vitrina-texto h1{ font-size:2.4rem; font-weight:700; margin-top:6px; line-height:1.1;}
+  .vitrina-texto p{ margin-top:10px; color:#F3E1E1; font-size:.98rem; line-height:1.5;}
+
+  .scoops{
+    position:absolute;
+    right:40px;
+    bottom:26px;
+    display:flex;
+    align-items:flex-end;
+    gap:22px;
+  }
+  .scoop-wrap{
+    display:flex; flex-direction:column; align-items:center;
+    animation: flotar 4.5s ease-in-out infinite;
+  }
+  .scoop-wrap:nth-child(2){ animation-delay:.4s; }
+  .scoop-wrap:nth-child(3){ animation-delay:.9s; }
+  .scoop-wrap:nth-child(4){ animation-delay:1.3s; }
+  @keyframes flotar{
+    0%,100%{ transform:translateY(0); }
+    50%{ transform:translateY(-8px); }
+  }
+  .bola{
+    width:52px;height:52px;
+    border-radius:50% 50% 46% 50%;
+    box-shadow: inset -6px -6px 10px rgba(0,0,0,.18), 0 6px 10px rgba(0,0,0,.25);
+    margin-bottom:-14px;
+  }
+  .bola.chica{ width:44px; height:44px; }
+  .bola.pistacchio{ background:radial-gradient(circle at 32% 28%, #A9C186, var(--pistacchio-oscuro)); }
+  .bola.amarena{ background:radial-gradient(circle at 32% 28%, #C24F63, var(--amarena)); }
+  .bola.crema{ background:radial-gradient(circle at 32% 28%, #FFF6E4, #E8CD93); }
+  .bola.choco{ background:radial-gradient(circle at 32% 28%, #7A5236, #3A2314); }
+  .cono{
+    width:0; height:0;
+    border-left:22px solid transparent;
+    border-right:22px solid transparent;
+    border-top:46px solid #D6A24C;
+    clip-path:polygon(50% 100%, 0 0, 100% 0);
+    background-image:
+      repeating-linear-gradient(45deg, transparent 0 6px, rgba(0,0,0,.08) 6px 7px),
+      repeating-linear-gradient(-45deg, transparent 0 6px, rgba(0,0,0,.08) 6px 7px);
+  }
+
+  /* ---------- CONTENEDOR ---------- */
+  .contenedor{ padding:36px 40px 70px; max-width:1200px; margin:0 auto; }
+
+  .titulo-seccion{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    flex-wrap:wrap;
+    gap:16px;
+    margin-bottom:26px;
+  }
+  .titulo-seccion h2{ font-size:1.6rem; font-weight:700; }
+  .titulo-seccion p{ margin-top:4px; color:#7A6355; font-size:.92rem; }
+
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:12px 22px;
+    border-radius:10px;
+    font-weight:700;
+    font-size:.9rem;
+    text-decoration:none;
+    cursor:pointer;
+    border:none;
+    transition:transform .18s ease, box-shadow .18s ease;
+  }
+  .btn-primario{
+    background:var(--amarena);
+    color:var(--marfil);
+    box-shadow:0 8px 18px rgba(122,17,40,.32);
+  }
+  .btn-primario:hover{ transform:translateY(-2px); box-shadow:0 12px 22px rgba(122,17,40,.4); background:var(--amarena-luz); }
+
+  /* ---------- TARJETAS ---------- */
+  .tarjetas{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:18px;
+    margin-bottom:30px;
+  }
+  .tarjeta{
+    background:var(--marfil);
+    border:1px solid var(--linea);
+    border-radius:16px;
+    padding:20px 22px;
+    box-shadow:var(--sombra);
+    position:relative;
+    overflow:hidden;
+    transition:transform .25s ease, box-shadow .25s ease;
+  }
+  .tarjeta::before{
+    content:"";
+    position:absolute; top:-30px; right:-30px;
+    width:90px; height:90px; border-radius:50%;
+    background:var(--panna);
+    opacity:.7;
+  }
+  .tarjeta:hover{ transform:translateY(-4px); box-shadow:0 16px 30px rgba(58,38,32,.18); }
+  .tarjeta .numero{
+    font-family:'Fraunces', serif;
+    font-size:2.1rem;
+    font-weight:700;
+    color:var(--amarena);
+    position:relative;
+  }
+  .tarjeta.alerta .numero{ color:var(--oro); }
+  .tarjeta .etiqueta{ margin-top:4px; font-size:.85rem; color:#7A6355; font-weight:600; position:relative;}
+
+  /* ---------- FILTROS ---------- */
+  .filtros{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    align-items:center;
+    margin-bottom:18px;
+  }
+  .buscador{
+    flex:1;
+    min-width:220px;
+    position:relative;
+  }
+  .buscador input{
+    width:100%;
+    padding:12px 16px 12px 40px;
+    border-radius:10px;
+    border:1px solid var(--linea);
+    background:var(--marfil);
+    font-family:'Manrope',sans-serif;
+    font-size:.92rem;
+    outline:none;
+    transition:.2s;
+  }
+  .buscador input:focus{ border-color:var(--amarena); box-shadow:0 0 0 3px rgba(122,17,40,.12); }
+  .buscador::before{
+    content:"🔍";
+    position:absolute; left:14px; top:50%; transform:translateY(-50%);
+    font-size:.85rem; opacity:.6;
+  }
+  .chip{
+    padding:9px 16px;
+    border-radius:999px;
+    border:1px solid var(--linea);
+    background:var(--marfil);
+    font-size:.82rem;
+    font-weight:700;
+    cursor:pointer;
+    color:var(--cioccolato);
+    transition:.2s;
+  }
+  .chip:hover{ border-color:var(--pistacchio); }
+  .chip.activo{ background:var(--amarena); color:var(--marfil); border-color:var(--amarena); }
+
+  /* ---------- TABLA ---------- */
+  .tabla-caja{
+    background:var(--marfil);
+    border:1px solid var(--linea);
+    border-radius:16px;
+    box-shadow:var(--sombra);
+    overflow:hidden;
+  }
+  table{ width:100%; border-collapse:collapse; }
+  thead th{
+    text-align:left;
+    background:var(--panna);
+    padding:14px 18px;
+    font-size:.74rem;
+    text-transform:uppercase;
+    letter-spacing:1.2px;
+    color:var(--amarena-oscuro);
+    cursor:pointer;
+    user-select:none;
+    white-space:nowrap;
+  }
+  thead th:hover{ color:var(--amarena); }
+  thead th .flecha{ font-size:.7rem; opacity:.5; margin-left:4px; }
+  tbody tr{
+    border-top:1px solid var(--linea);
+    transition:background .18s ease;
+    animation: aparecer .35s ease both;
+  }
+  @keyframes aparecer{ from{ opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+  tbody tr:hover{ background:#FDF6EA; }
+  td{ padding:14px 18px; font-size:.9rem; vertical-align:middle; }
+
+  .producto-nombre{ display:flex; align-items:center; gap:10px; font-weight:700; }
+  .punto{ width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+  .punto.tinas{ background:var(--amarena); }
+  .punto.conos{ background:var(--oro); }
+  .punto.toppings{ background:var(--pistacchio); }
+  .punto.bebidas{ background:#6E8FB0; }
+  .punto.insumos{ background:#9B7653; }
+
+  .stock-barra{
+    width:100px;
+    height:7px;
+    border-radius:999px;
+    background:var(--panna);
+    overflow:hidden;
+    margin-top:6px;
+  }
+  .stock-relleno{ height:100%; border-radius:999px; transition:width .6s ease; }
+  .stock-relleno.ok{ background:var(--pistacchio); }
+  .stock-relleno.bajo{ background:var(--amarena); }
+
+  .estado{
+    padding:5px 12px;
+    border-radius:999px;
+    font-size:.76rem;
+    font-weight:700;
+    display:inline-block;
+  }
+  .estado.ok{ background:#E7EFDD; color:var(--pistacchio-oscuro); }
+  .estado.bajo{ background:#F7E1E4; color:var(--amarena); animation:pulso 1.8s ease-in-out infinite; }
+  @keyframes pulso{ 0%,100%{box-shadow:0 0 0 0 rgba(122,17,40,.25);} 50%{box-shadow:0 0 0 6px rgba(122,17,40,0);} }
+
+  .acciones{ display:flex; gap:14px; white-space:nowrap;}
+  .acciones a{ color:var(--amarena); font-weight:700; font-size:.84rem; text-decoration:none; cursor:pointer; }
+  .acciones a.eliminar{ color:#a35; opacity:.7; }
+  .acciones a:hover{ text-decoration:underline; }
+
+  .vacio{ text-align:center; padding:50px 20px; color:#9A8776; }
+  .vacio .emoji{ font-size:2rem; display:block; margin-bottom:8px;}
+
+  /* ---------- MODAL ---------- */
+  .overlay{
+    position:fixed; inset:0; background:rgba(58,38,32,.55);
+    display:none; align-items:center; justify-content:center; z-index:100;
+    backdrop-filter:blur(2px);
+  }
+  .overlay.abierto{ display:flex; animation:fundido .2s ease; }
+  @keyframes fundido{ from{opacity:0;} to{opacity:1;} }
+  .modal{
+    background:var(--marfil);
+    border-radius:18px;
+    padding:28px 30px;
+    width:min(440px, 92vw);
+    box-shadow:0 30px 60px rgba(0,0,0,.35);
+    animation:subir .25s ease;
+  }
+  @keyframes subir{ from{ transform:translateY(16px); opacity:0;} to{transform:translateY(0); opacity:1;} }
+  .modal h3{ font-size:1.3rem; margin-bottom:4px; }
+  .modal p.desc{ color:#8a7565; font-size:.85rem; margin:0 0 18px; }
+  .campo{ margin-bottom:14px; display:flex; flex-direction:column; gap:6px; }
+  .campo label{ font-size:.78rem; font-weight:700; color:var(--amarena-oscuro); }
+  .campo input, .campo select{
+    padding:10px 12px; border-radius:8px; border:1px solid var(--linea);
+    font-family:'Manrope',sans-serif; font-size:.9rem; outline:none;
+  }
+  .campo input:focus, .campo select:focus{ border-color:var(--amarena); }
+  .modal-acciones{ display:flex; justify-content:flex-end; gap:10px; margin-top:20px; }
+  .btn-secundario{ background:transparent; color:#7A6355; border:1px solid var(--linea); }
+  .btn-secundario:hover{ background:var(--panna); }
+
+  .toast{
+    position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--cioccolato); color:var(--marfil); padding:12px 22px; border-radius:10px;
+    font-size:.88rem; font-weight:600; opacity:0; pointer-events:none; transition:.3s ease; z-index:200;
+    box-shadow:0 10px 25px rgba(0,0,0,.3);
+  }
+  .toast.mostrar{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+  footer{ text-align:center; padding:26px; color:#a4907d; font-size:.8rem; }
+
+  @media (max-width: 900px){
+    .tarjetas{ grid-template-columns:repeat(2,1fr); }
+    .vitrina{ padding:30px 24px 50px; }
+    .scoops{ position:static; margin-top:26px; justify-content:center; }
+    .contenedor{ padding:26px 18px 60px; }
+    .navbar{ padding:14px 20px; }
+    .tabla-caja{ overflow-x:auto; }
+    table{ min-width:720px; }
+  }
+  @media (max-width:520px){
+    .tarjetas{ grid-template-columns:1fr; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation:none !important; transition:none !important; }
+  }
+</style>
 </head>
 <body>
 
   <div class="navbar">
-    <div class="logo">🍦 Doña <span>Nieve</span></div>
+    <div class="logo">
+      <svg class="cono-icono" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="30" cy="20" r="14" fill="#E8CD93"/>
+        <circle cx="22" cy="16" r="10" fill="#C24F63"/>
+        <circle cx="38" cy="15" r="9" fill="#A9C186"/>
+        <path d="M15 26 L30 58 L45 26 Z" fill="#D6A24C"/>
+      </svg>
+      <div>Amareno <span style="font-style:normal;color:#C9A227;">Gelato</span>
+        <span class="sub">Gelato Italiano · Artigianale</span>
+      </div>
+    </div>
     <div class="usuario">
       <span>Hola, Camila</span>
       <a href="#" class="btn-salir">Cerrar sesión</a>
+    </div>
+  </div>
+
+  <div class="vitrina">
+    <div class="vitrina-texto">
+      <div class="eyebrow">La vetrina · Panel de control</div>
+      <h1>Inventario de sabores</h1>
+      <p>Controla las vaschette, conos, toppings e insumos de Amareno. Cada sabor cuenta, cada cucchiaio importa.</p>
+    </div>
+    <div class="scoops" aria-hidden="true">
+      <div class="scoop-wrap">
+        <div class="bola pistacchio"></div>
+        <div class="cono"></div>
+      </div>
+      <div class="scoop-wrap">
+        <div class="bola amarena"></div>
+        <div class="bola chica crema" style="margin-bottom:-10px;"></div>
+        <div class="cono"></div>
+      </div>
+      <div class="scoop-wrap">
+        <div class="bola choco"></div>
+        <div class="cono"></div>
+      </div>
     </div>
   </div>
 
@@ -19,89 +451,290 @@
 
     <div class="titulo-seccion">
       <div>
-        <h1>Inventario general</h1>
-        <p>Gestiona productos, precios y existencias de la heladería</p>
+        <h2>Existencias generales</h2>
+        <p>Gestiona productos, precios y stock de la heladería</p>
       </div>
-      <a href="#" class="btn btn-primario">+ Agregar producto</a>
+      <button class="btn btn-primario" id="btnAbrirModal">+ Agregar producto</button>
     </div>
 
     <div class="tarjetas">
       <div class="tarjeta">
-        <div class="numero">18</div>
-        <div class="etiqueta">Productos activos</div>
+        <div class="numero" id="statTotal">0</div>
+        <div class="etiqueta">Sabores y productos activos</div>
       </div>
-      <div class="tarjeta">
-        <div class="numero">3</div>
+      <div class="tarjeta alerta">
+        <div class="numero" id="statBajo">0</div>
         <div class="etiqueta">Con stock bajo</div>
       </div>
       <div class="tarjeta">
-        <div class="numero">$1.850.000</div>
+        <div class="numero" id="statValor">$0</div>
         <div class="etiqueta">Valor del inventario</div>
       </div>
       <div class="tarjeta">
-        <div class="numero">24</div>
+        <div class="numero" id="statVentas">31</div>
         <div class="etiqueta">Ventas de hoy</div>
       </div>
+    </div>
+
+    <div class="filtros">
+      <div class="buscador">
+        <input type="text" id="buscar" placeholder="Buscar sabor o producto...">
+      </div>
+      <button class="chip activo" data-cat="todos">Todos</button>
+      <button class="chip" data-cat="Vaschette">🍨 Vaschette</button>
+      <button class="chip" data-cat="Conos">🍦 Conos</button>
+      <button class="chip" data-cat="Toppings">🍫 Toppings</button>
+      <button class="chip" data-cat="Bebidas">🥤 Bebidas</button>
+      <button class="chip" data-cat="Insumos">📦 Insumos</button>
     </div>
 
     <div class="tabla-caja">
       <table>
         <thead>
           <tr>
-            <th>Producto</th>
-            <th>Categoría</th>
-            <th>Stock</th>
-            <th>Precio</th>
+            <th data-key="nombre">Producto <span class="flecha">↕</span></th>
+            <th data-key="categoria">Categoría <span class="flecha">↕</span></th>
+            <th data-key="stock">Stock <span class="flecha">↕</span></th>
+            <th data-key="precio">Precio <span class="flecha">↕</span></th>
             <th>Estado</th>
             <th>Acciones</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td>Helado de vainilla (5L)</td>
-            <td>Tinas</td>
-            <td>12</td>
-            <td>$45.000</td>
-            <td><span class="estado ok">Disponible</span></td>
-            <td class="acciones"><a href="#">Editar</a><a href="#">Eliminar</a></td>
-          </tr>
-          <tr>
-            <td>Helado de chocolate (5L)</td>
-            <td>Tinas</td>
-            <td>4</td>
-            <td>$45.000</td>
-            <td><span class="estado bajo">Stock bajo</span></td>
-            <td class="acciones"><a href="#">Editar</a><a href="#">Eliminar</a></td>
-          </tr>
-          <tr>
-            <td>Conos de barquillo</td>
-            <td>Insumos</td>
-            <td>230</td>
-            <td>$300</td>
-            <td><span class="estado ok">Disponible</span></td>
-            <td class="acciones"><a href="#">Editar</a><a href="#">Eliminar</a></td>
-          </tr>
-          <tr>
-            <td>Chispas de chocolate</td>
-            <td>Toppings</td>
-            <td>6</td>
-            <td>$8.000</td>
-            <td><span class="estado bajo">Stock bajo</span></td>
-            <td class="acciones"><a href="#">Editar</a><a href="#">Eliminar</a></td>
-          </tr>
-          <tr>
-            <td>Helado de fresa (5L)</td>
-            <td>Tinas</td>
-            <td>15</td>
-            <td>$45.000</td>
-            <td><span class="estado ok">Disponible</span></td>
-            <td class="acciones"><a href="#">Editar</a><a href="#">Eliminar</a></td>
-          </tr>
-        </tbody>
+        <tbody id="cuerpoTabla"></tbody>
       </table>
+      <div class="vacio" id="mensajeVacio" style="display:none;">
+        <span class="emoji">🍨</span>
+        No encontramos sabores con ese filtro. Prueba otra búsqueda.
+      </div>
     </div>
 
+    <footer>Proyecto académico · Amareno Gelato Italiano — inventario ilustrado sin fotografías reales.</footer>
   </div>
+
+  <div class="overlay" id="overlay">
+    <div class="modal">
+      <h3>Agregar producto</h3>
+      <p class="desc">Registra un nuevo sabor o insumo en la vitrina.</p>
+      <form id="formProducto">
+        <div class="campo">
+          <label for="fNombre">Nombre del producto</label>
+          <input type="text" id="fNombre" placeholder="Ej: Gelato de Amaretto (5L)" required>
+        </div>
+        <div class="campo">
+          <label for="fCategoria">Categoría</label>
+          <select id="fCategoria" required>
+            <option value="Vaschette">Vaschette</option>
+            <option value="Conos">Conos</option>
+            <option value="Toppings">Toppings</option>
+            <option value="Bebidas">Bebidas</option>
+            <option value="Insumos">Insumos</option>
+          </select>
+        </div>
+        <div class="campo">
+          <label for="fStock">Stock</label>
+          <input type="number" id="fStock" min="0" placeholder="Ej: 20" required>
+        </div>
+        <div class="campo">
+          <label for="fPrecio">Precio ($)</label>
+          <input type="number" id="fPrecio" min="0" placeholder="Ej: 45000" required>
+        </div>
+        <div class="modal-acciones">
+          <button type="button" class="btn btn-secundario" id="btnCerrarModal">Cancelar</button>
+          <button type="submit" class="btn btn-primario">Guardar producto</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Producto guardado</div>
+
+<script>
+  const UMBRAL_BAJO = 10;
+  const MAX_STOCK_REF = 250;
+
+  let productos = [
+    { nombre:"Gelato de Pistacchio (5L)", categoria:"Vaschette", stock:14, precio:52000 },
+    { nombre:"Gelato de Amarena (5L)", categoria:"Vaschette", stock:6, precio:52000 },
+    { nombre:"Gelato de Nocciola (5L)", categoria:"Vaschette", stock:18, precio:52000 },
+    { nombre:"Gelato de Stracciatella (5L)", categoria:"Vaschette", stock:9, precio:50000 },
+    { nombre:"Gelato de Limone (5L)", categoria:"Vaschette", stock:21, precio:48000 },
+    { nombre:"Conos de barquillo artesanal", categoria:"Conos", stock:240, precio:400 },
+    { nombre:"Conos de chocolate", categoria:"Conos", stock:8, precio:600 },
+    { nombre:"Salsa de amarena", categoria:"Toppings", stock:15, precio:9500 },
+    { nombre:"Crocante de avellanas", categoria:"Toppings", stock:5, precio:8500 },
+    { nombre:"Chispas de chocolate", categoria:"Toppings", stock:32, precio:7000 },
+    { nombre:"Café espresso (insumo affogato)", categoria:"Bebidas", stock:12, precio:11000 },
+    { nombre:"Vasos y tapas biodegradables", categoria:"Insumos", stock:180, precio:250 },
+  ];
+
+  let filtroCategoria = "todos";
+  let filtroTexto = "";
+  let ordenCol = null;
+  let ordenAsc = true;
+
+  const cuerpoTabla = document.getElementById("cuerpoTabla");
+  const mensajeVacio = document.getElementById("mensajeVacio");
+
+  function formatoDinero(n){
+    return "$" + n.toLocaleString("es-CO");
+  }
+
+  function calcularEstadisticas(){
+    const total = productos.length;
+    const bajos = productos.filter(p => p.stock < UMBRAL_BAJO).length;
+    const valor = productos.reduce((acc,p)=> acc + p.stock*p.precio, 0);
+    animarNumero("statTotal", total);
+    animarNumero("statBajo", bajos);
+    animarNumero("statValor", valor, true);
+  }
+
+  function animarNumero(id, valorFinal, esDinero=false){
+    const el = document.getElementById(id);
+    const inicio = 0;
+    const duracion = 700;
+    const t0 = performance.now();
+    function paso(t){
+      const progreso = Math.min((t - t0)/duracion, 1);
+      const actual = Math.floor(inicio + (valorFinal-inicio)*progreso);
+      el.textContent = esDinero ? formatoDinero(actual) : actual;
+      if(progreso < 1) requestAnimationFrame(paso);
+    }
+    requestAnimationFrame(paso);
+  }
+
+  function claseCategoria(cat){
+    const mapa = { "Vaschette":"tinas", "Conos":"conos", "Toppings":"toppings", "Bebidas":"bebidas", "Insumos":"insumos" };
+    return mapa[cat] || "insumos";
+  }
+
+  function renderTabla(){
+    let lista = productos.filter(p=>{
+      const coincideCat = filtroCategoria === "todos" || p.categoria === filtroCategoria;
+      const coincideTexto = p.nombre.toLowerCase().includes(filtroTexto.toLowerCase());
+      return coincideCat && coincideTexto;
+    });
+
+    if(ordenCol){
+      lista.sort((a,b)=>{
+        let va = a[ordenCol], vb = b[ordenCol];
+        if(typeof va === "string"){ va = va.toLowerCase(); vb = vb.toLowerCase(); }
+        if(va < vb) return ordenAsc ? -1 : 1;
+        if(va > vb) return ordenAsc ? 1 : -1;
+        return 0;
+      });
+    }
+
+    cuerpoTabla.innerHTML = "";
+    mensajeVacio.style.display = lista.length ? "none" : "block";
+
+    lista.forEach((p) => {
+      const idxReal = productos.indexOf(p);
+      const bajo = p.stock < UMBRAL_BAJO;
+      const anchoBarra = Math.min(100, Math.round((p.stock / MAX_STOCK_REF) * 100));
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>
+          <div class="producto-nombre">
+            <span class="punto ${claseCategoria(p.categoria)}"></span>
+            ${p.nombre}
+          </div>
+        </td>
+        <td>${p.categoria}</td>
+        <td>
+          ${p.stock}
+          <div class="stock-barra"><div class="stock-relleno ${bajo ? 'bajo' : 'ok'}" style="width:${anchoBarra}%"></div></div>
+        </td>
+        <td>${formatoDinero(p.precio)}</td>
+        <td><span class="estado ${bajo ? 'bajo' : 'ok'}">${bajo ? 'Stock bajo' : 'Disponible'}</span></td>
+        <td class="acciones">
+          <a data-accion="editar" data-idx="${idxReal}">Editar</a>
+          <a data-accion="eliminar" data-idx="${idxReal}" class="eliminar">Eliminar</a>
+        </td>
+      `;
+      cuerpoTabla.appendChild(tr);
+    });
+
+    calcularEstadisticas();
+  }
+
+  document.querySelectorAll(".chip").forEach(chip=>{
+    chip.addEventListener("click", ()=>{
+      document.querySelectorAll(".chip").forEach(c=>c.classList.remove("activo"));
+      chip.classList.add("activo");
+      filtroCategoria = chip.dataset.cat;
+      renderTabla();
+    });
+  });
+
+  document.getElementById("buscar").addEventListener("input", (e)=>{
+    filtroTexto = e.target.value;
+    renderTabla();
+  });
+
+  document.querySelectorAll("thead th[data-key]").forEach(th=>{
+    th.addEventListener("click", ()=>{
+      const key = th.dataset.key;
+      if(ordenCol === key){ ordenAsc = !ordenAsc; } else { ordenCol = key; ordenAsc = true; }
+      renderTabla();
+    });
+  });
+
+  cuerpoTabla.addEventListener("click", (e)=>{
+    const a = e.target.closest("a[data-accion]");
+    if(!a) return;
+    const idx = Number(a.dataset.idx);
+    if(a.dataset.accion === "eliminar"){
+      const fila = a.closest("tr");
+      fila.style.transition = "all .3s ease";
+      fila.style.opacity = "0";
+      fila.style.transform = "translateX(20px)";
+      setTimeout(()=>{
+        productos.splice(idx,1);
+        renderTabla();
+        mostrarToast("Producto eliminado");
+      }, 280);
+    } else if(a.dataset.accion === "editar"){
+      const p = productos[idx];
+      const nuevoStock = prompt(`Nuevo stock para "${p.nombre}":`, p.stock);
+      if(nuevoStock !== null && !isNaN(nuevoStock) && nuevoStock !== ""){
+        p.stock = Math.max(0, parseInt(nuevoStock));
+        renderTabla();
+        mostrarToast("Producto actualizado");
+      }
+    }
+  });
+
+  // Modal
+  const overlay = document.getElementById("overlay");
+  document.getElementById("btnAbrirModal").addEventListener("click", ()=> overlay.classList.add("abierto"));
+  document.getElementById("btnCerrarModal").addEventListener("click", ()=> overlay.classList.remove("abierto"));
+  overlay.addEventListener("click", (e)=>{ if(e.target === overlay) overlay.classList.remove("abierto"); });
+
+  document.getElementById("formProducto").addEventListener("submit", (e)=>{
+    e.preventDefault();
+    const nombre = document.getElementById("fNombre").value.trim();
+    const categoria = document.getElementById("fCategoria").value;
+    const stock = parseInt(document.getElementById("fStock").value);
+    const precio = parseInt(document.getElementById("fPrecio").value);
+    if(!nombre) return;
+    productos.unshift({ nombre, categoria, stock, precio });
+    overlay.classList.remove("abierto");
+    e.target.reset();
+    renderTabla();
+    mostrarToast("Producto guardado ✓");
+  });
+
+  let toastTimeout;
+  function mostrarToast(msg){
+    const toast = document.getElementById("toast");
+    toast.textContent = msg;
+    toast.classList.add("mostrar");
+    clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(()=> toast.classList.remove("mostrar"), 2200);
+  }
+
+  renderTabla();
+</script>
 
 </body>
 </html>
