@@ -308,6 +308,13 @@
   td{ padding:14px 18px; font-size:.9rem; vertical-align:middle; }
 
   .producto-nombre{ display:flex; align-items:center; gap:10px; font-weight:700; }
+  .icono-producto{
+    width:30px; height:30px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.05rem;
+    border-radius:8px;
+    background:var(--panna);
+  }
   .punto{ width:10px; height:10px; border-radius:50%; flex-shrink:0; }
   .punto.tinas{ background:var(--amarena); }
   .punto.conos{ background:var(--oro); }
@@ -486,6 +493,7 @@
       <button class="chip" data-cat="Toppings">🍫 Toppings</button>
       <button class="chip" data-cat="Bebidas">🥤 Bebidas</button>
       <button class="chip" data-cat="Insumos">📦 Insumos</button>
+      <button class="chip" id="btnReset" title="Borra lo guardado en este navegador y vuelve a los datos de ejemplo">↺ Restablecer datos</button>
     </div>
 
     <div class="tabla-caja">
@@ -552,7 +560,11 @@
   const UMBRAL_BAJO = 10;
   const MAX_STOCK_REF = 250;
 
-  let productos = [
+  // ---------- DATOS POR DEFECTO ----------
+  // Este arreglo solo se usa la PRIMERA vez que alguien abre la página
+  // (o cuando presiona "Restablecer datos"). Una vez que hay algo guardado
+  // en localStorage, esa versión guardada es la que se usa.
+  const productosPorDefecto = [
     { nombre:"Gelato de Pistacchio (5L)", categoria:"Vaschette", stock:14, precio:52000 },
     { nombre:"Gelato de Amarena (5L)", categoria:"Vaschette", stock:6, precio:52000 },
     { nombre:"Gelato de Nocciola (5L)", categoria:"Vaschette", stock:18, precio:52000 },
@@ -566,6 +578,20 @@
     { nombre:"Café espresso (insumo affogato)", categoria:"Bebidas", stock:12, precio:11000 },
     { nombre:"Vasos y tapas biodegradables", categoria:"Insumos", stock:180, precio:250 },
   ];
+
+  // "productos" es el arreglo que la página realmente usa y modifica.
+  // Empieza como una copia de los datos por defecto; unas líneas más abajo
+  // lo sobreescribimos si encontramos algo guardado en localStorage.
+  let productos = JSON.parse(JSON.stringify(productosPorDefecto));
+
+  // Icono (emoji) que se muestra junto a cada producto, según su categoría.
+  const iconosCategoria = {
+    "Vaschette": "🍨",
+    "Conos": "🍦",
+    "Toppings": "🍫",
+    "Bebidas": "🥤",
+    "Insumos": "📦"
+  };
 
   let filtroCategoria = "todos";
   let filtroTexto = "";
@@ -607,6 +633,33 @@
     return mapa[cat] || "insumos";
   }
 
+  // ---------- LOCALSTORAGE ----------
+  // localStorage solo puede guardar TEXTO (strings). Como "productos" es un
+  // arreglo de objetos, hay que convertirlo a texto con JSON.stringify()
+  // antes de guardarlo, y de vuelta a objeto con JSON.parse() al leerlo.
+  const CLAVE_STORAGE = "amareno_inventario"; // el "nombre" con el que se guarda
+
+  function guardarEnStorage(){
+    try{
+      localStorage.setItem(CLAVE_STORAGE, JSON.stringify(productos));
+    }catch(e){
+      // Puede fallar si el navegador bloquea localStorage (modo privado,
+      // vista previa dentro de un iframe, etc.). No rompemos la página por eso.
+      console.warn("No se pudo guardar en localStorage:", e);
+    }
+  }
+
+  function cargarDesdeStorage(){
+    try{
+      const guardado = localStorage.getItem(CLAVE_STORAGE);
+      if(guardado){
+        productos = JSON.parse(guardado);
+      }
+    }catch(e){
+      console.warn("No se pudo leer localStorage, se usan los datos por defecto:", e);
+    }
+  }
+
   function renderTabla(){
     let lista = productos.filter(p=>{
       const coincideCat = filtroCategoria === "todos" || p.categoria === filtroCategoria;
@@ -632,9 +685,11 @@
       const bajo = p.stock < UMBRAL_BAJO;
       const anchoBarra = Math.min(100, Math.round((p.stock / MAX_STOCK_REF) * 100));
       const tr = document.createElement("tr");
+      const icono = iconosCategoria[p.categoria] || "🍧";
       tr.innerHTML = `
         <td>
           <div class="producto-nombre">
+            <span class="icono-producto">${icono}</span>
             <span class="punto ${claseCategoria(p.categoria)}"></span>
             ${p.nombre}
           </div>
@@ -655,6 +710,7 @@
     });
 
     calcularEstadisticas();
+    guardarEnStorage(); // cada vez que la tabla cambia, se guarda el estado actual
   }
 
   document.querySelectorAll(".chip").forEach(chip=>{
@@ -733,6 +789,19 @@
     toastTimeout = setTimeout(()=> toast.classList.remove("mostrar"), 2200);
   }
 
+  // Botón "Restablecer datos": borra lo guardado y vuelve a los datos de ejemplo
+  document.getElementById("btnReset").addEventListener("click", ()=>{
+    const confirmar = confirm("Esto borrará los cambios guardados en este navegador y volverá a los datos de ejemplo. ¿Continuar?");
+    if(!confirmar) return;
+    localStorage.removeItem(CLAVE_STORAGE);
+    productos = JSON.parse(JSON.stringify(productosPorDefecto));
+    renderTabla();
+    mostrarToast("Datos restablecidos");
+  });
+
+  // Al abrir la página: primero intentamos leer lo que había guardado antes,
+  // y luego dibujamos la tabla con esos datos (o con los de ejemplo si no había nada).
+  cargarDesdeStorage();
   renderTabla();
 </script>
 
